@@ -15,6 +15,15 @@ end
 
 class ItemWrapper < SimpleDelegator
   def update
+    age
+    update_quality
+  end
+
+  def age
+    self.sell_in -= 1 if name != "Sulfuras, Hand of Ragnaros"
+  end
+
+  def update_quality
     if name != "Aged Brie" and name != "Backstage passes to a TAFKAL80ETC concert"
       if name != "Sulfuras, Hand of Ragnaros"
         decrease_quality
@@ -30,9 +39,7 @@ class ItemWrapper < SimpleDelegator
         end
       end
     end
-    if name != "Sulfuras, Hand of Ragnaros"
-      self.sell_in -= 1
-    end
+
     if sell_in < 0
       if name != "Aged Brie"
         if name != "Backstage passes to a TAFKAL80ETC concert"
