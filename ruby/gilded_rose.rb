@@ -1,3 +1,5 @@
+require 'delegate'
+
 class GildedRose
 
   def initialize(items)
@@ -6,55 +8,52 @@ class GildedRose
 
   def update_quality()
     @items.each do |item|
-      update_item(item)
+      ItemWrapper.new(item).update
+    end
+  end
+end
+
+class ItemWrapper < SimpleDelegator
+  def update
+    if name != "Aged Brie" and name != "Backstage passes to a TAFKAL80ETC concert"
+      if name != "Sulfuras, Hand of Ragnaros"
+        decrease_quality
+      end
+    else
+      increase_quality
+      if name == "Backstage passes to a TAFKAL80ETC concert"
+        if sell_in < 11
+          increase_quality
+        end
+        if sell_in < 6
+          increase_quality
+        end
+      end
+    end
+    if name != "Sulfuras, Hand of Ragnaros"
+      self.sell_in -= 1
+    end
+    if sell_in < 0
+      if name != "Aged Brie"
+        if name != "Backstage passes to a TAFKAL80ETC concert"
+          if name != "Sulfuras, Hand of Ragnaros"
+            decrease_quality
+          end
+        else
+          self.quality -= quality
+        end
+      else
+        increase_quality
+      end
     end
   end
 
-  def update_item(item)
-    if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
-      if item.quality > 0
-        if item.name != "Sulfuras, Hand of Ragnaros"
-          item.quality = item.quality - 1
-        end
-      end
-    else
-      if item.quality < 50
-        item.quality = item.quality + 1
-        if item.name == "Backstage passes to a TAFKAL80ETC concert"
-          if item.sell_in < 11
-            if item.quality < 50
-              item.quality = item.quality + 1
-            end
-          end
-          if item.sell_in < 6
-            if item.quality < 50
-              item.quality = item.quality + 1
-            end
-          end
-        end
-      end
-    end
-    if item.name != "Sulfuras, Hand of Ragnaros"
-      item.sell_in = item.sell_in - 1
-    end
-    if item.sell_in < 0
-      if item.name != "Aged Brie"
-        if item.name != "Backstage passes to a TAFKAL80ETC concert"
-          if item.quality > 0
-            if item.name != "Sulfuras, Hand of Ragnaros"
-              item.quality = item.quality - 1
-            end
-          end
-        else
-          item.quality = item.quality - item.quality
-        end
-      else
-        if item.quality < 50
-          item.quality = item.quality + 1
-        end
-      end
-    end
+  def increase_quality
+    self.quality += 1 if quality < 50
   end
+
+  def decrease_quality
+    self.quality -= 1 if quality > 0
   end
 end
 
