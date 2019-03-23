@@ -22,6 +22,8 @@ class ItemWrapper < SimpleDelegator
       BackstagePass.new(item)
     when "Conjured Mana Cake"
       ConjuredItem.new(item)
+    when "Sulfuras, Hand of Ragnaros"
+      SulfurasItem.new(item)
     else
       new(item)
     end
@@ -43,8 +45,11 @@ class ItemWrapper < SimpleDelegator
   end
 
   def caluculate_quality_adjustment
-    adjustment = -1
+    adjustment = 0
+
     if sell_in < 0
+      adjustment -= 1
+    else
       adjustment -= 1
     end
 
@@ -86,7 +91,7 @@ class BackstagePass < ItemWrapper
   end
 end
 
-def ConjuredItem < ItemWrapper
+class ConjuredItem < ItemWrapper
   def caluculate_quality_adjustment
     adjustment = -2
     if sell_in < 0
@@ -94,6 +99,12 @@ def ConjuredItem < ItemWrapper
     end
 
     adjustment
+  end
+end
+
+class SulfurasItem
+  def caluculate_quality_adjustment
+    #This item don't change anything
   end
 end
 
