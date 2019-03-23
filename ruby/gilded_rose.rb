@@ -1,16 +1,18 @@
 require 'delegate'
 
 class GildedRose
+  attr_accessor :items
 
   def initialize(items)
     @items = items
   end
 
-  def update_quality()
-    @items.each do |item|
+  def update_quality
+    items.each do |item|
       ItemWrapper.wrap(item).update
     end
   end
+
 end
 
 class ItemWrapper < SimpleDelegator
@@ -37,7 +39,7 @@ class ItemWrapper < SimpleDelegator
   end
 
   def age
-    self.sell_in -= 1 if name != "Sulfuras, Hand of Ragnaros"
+    self.sell_in -= 1
   end
 
   def update_quality
@@ -102,7 +104,7 @@ class ConjuredItem < ItemWrapper
   end
 end
 
-class SulfurasItem
+class SulfurasItem < ItemWrapper
   def caluculate_quality_adjustment
     #This item don't change anything
   end
