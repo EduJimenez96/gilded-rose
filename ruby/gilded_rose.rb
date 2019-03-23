@@ -18,6 +18,8 @@ class ItemWrapper < SimpleDelegator
     case item.name
     when "Aged Brie"
       AgedBrie.new(item)
+    when "Backstage passes to a TAFKAL80ETC concert"
+      BackstagePass.new(item)
     else
       new(item)
     end
@@ -40,17 +42,7 @@ class ItemWrapper < SimpleDelegator
 
   def caluculate_quality_adjustment
     adjustment = 0
-    if name == "Backstage passes to a TAFKAL80ETC concert"
-      if sell_in < 11
-        adjustment += 1
-      end
-      if sell_in < 6
-        adjustment += 1
-      end
-      if sell_in < 0
-        adjustment -= quality
-      end
-    elsif name == "Conjured Mana Cake"
+    if name == "Conjured Mana Cake"
       adjustment -= 2
       if sell_in < 0
         adjustment -= 2
@@ -77,6 +69,23 @@ class AgedBrie < ItemWrapper
     adjustment = 1
     if sell_in < 0
       adjustment += 1
+    end
+
+    adjustment
+  end
+end
+
+class BackstagePass < ItemWrapper
+  def caluculate_quality_adjustment
+    adjustment = 1
+    if sell_in < 11
+      adjustment += 1
+    end
+    if sell_in < 6
+      adjustment += 1
+    end
+    if sell_in < 0
+      adjustment -= quality
     end
 
     adjustment
