@@ -8,12 +8,21 @@ class GildedRose
 
   def update_quality()
     @items.each do |item|
-      ItemWrapper.new(item).update
+      ItemWrapper.wrap(item).update
     end
   end
 end
 
 class ItemWrapper < SimpleDelegator
+  def self.wrap(item)
+    case item.name
+    when "Aged Brie"
+      AgedBrie.new(item)
+    else
+      new(item)
+    end
+  end
+
   def update
     return if name == "Sulfuras, Hand of Ragnaros"
 
@@ -31,12 +40,7 @@ class ItemWrapper < SimpleDelegator
 
   def caluculate_quality_adjustment
     adjustment = 0
-    if name == "Aged Brie"
-      adjustment += 1
-      if sell_in < 0
-        adjustment += 1
-      end
-    elsif name == "Backstage passes to a TAFKAL80ETC concert"
+    if name == "Backstage passes to a TAFKAL80ETC concert"
       if sell_in < 11
         adjustment += 1
       end
@@ -65,6 +69,17 @@ class ItemWrapper < SimpleDelegator
     new_quality = 0 if new_quality < 0
     new_quality = 50 if new_quality > 50
     super(new_quality)
+  end
+end
+
+class AgedBrie < ItemWrapper
+  def caluculate_quality_adjustment
+    adjustment = 1
+    if sell_in < 0
+      adjustment += 1
+    end
+
+    adjustment
   end
 end
 
